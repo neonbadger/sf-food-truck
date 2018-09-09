@@ -1,6 +1,13 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""
+A module of helper functions for time-related operations.
+"""
+
+
 from datetime import datetime
+
 
 def get_datetime_now():
     """
@@ -33,7 +40,7 @@ def format_string_literal(s):
 
     This is needed to perform SoQL (Socrata Query Language) queries for the text datatype.
 
-    See https://dev.socrata.com/docs/datatypes/text.html for details.
+    Please see https://dev.socrata.com/docs/datatypes/text.html for details.
 
     :param s: str
     :return: str
@@ -70,3 +77,4 @@ def get_day_order(datetime):
 
     dayorder = (datetime.weekday() + 1) % 7
     return dayorder
+

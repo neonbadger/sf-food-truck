@@ -6,8 +6,8 @@ import requests
 import time
 
 from printutils import *
-from queryutils import *
-from timeutils import *
+from queryutils import build_payload
+from timeutils import get_datetime_now, format_24hr_string_literal, get_day_order
 
 
 FOODTRUCK_DATASET_BASE_URL = "https://data.sfgov.org/resource/bbb8-hzi6.json"
@@ -52,23 +52,11 @@ def fetch_data_in_batches(data_fields,
                                params=payload,
                                timeout=10)
 
-        # throw excpetion when request does not return 2XX
+        # throw excpetion when request does not return a 2XX status code
         response.raise_for_status()
 
-    except requests.exceptions.HTTPError as e:
-        print "HTTP error {}".format(e.message)
-        return -1
-
-    except requests.exceptions.ConnectionError as e:
-        print "Connection error {}".format(e.message)
-        return -1
-
-    except requests.exceptions.Timeout as e:
-        print "Timeout error {}".format(e.message)
-        return -1
-
     except requests.exceptions.RequestException as e:
-        print "Oops: Something went wrong {}".format(e.message)
+        print_http_error(e)
         return -1
 
     return response
@@ -80,6 +68,7 @@ def prompt_for_user_input():
 
     :return: string
     """
+
     prompt_string = "\nGet the next 10 results? Type letter 'e' to exit, or any other key to continue.\n"
     user_input = raw_input(prompt_string)
 
@@ -94,7 +83,7 @@ def go_to_next_page(user_input):
     :return: bool
     """
 
-    return user_input.lower() != "e"
+    return user_input != None and user_input.lower() != "e"
 
 
 def is_empty(json_response):
@@ -142,9 +131,13 @@ def main():
 
     while retries < max_retries:
 
+        # Skip prompt until first display or during automatic retries
         if not (first_load or retrying):
             user_input = prompt_for_user_input()
 
+
+        # Make server call if:
+        # (1) first call, (2) user continues, or (3) automatic retries
         if first_load or go_to_next_page(user_input) or retrying:
 
             response = fetch_data_in_batches(data_fields,
@@ -154,7 +147,7 @@ def main():
                                              page_limit,
                                              page_index)
 
-            # HTTP struggle land: allow retries
+            # Unsuccessful HTTP request: retry after 2 seconds
             if response == -1:
                 retries += 1
                 retrying = True
@@ -166,7 +159,6 @@ def main():
                 time.sleep(2)
                 continue
 
-            # HTTP success land
             parsed_response = response.json()
 
             if retrying:
@@ -185,8 +177,9 @@ def main():
                 print_end()
                 break
 
+        # User cancel case
         else:
-            print_end(user_terminate=True)
+            print_end(user_cancel=True)
             break
 
 

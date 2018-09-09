@@ -1,6 +1,13 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# https://dev.socrata.com/docs/queries/
+"""
+A module of helper functions to build URL parameters for SoQL (Socrata Query Language) queries.
+
+Please see https://dev.socrata.com/docs/queries/ for details.
+"""
+
+
 def build_select_clause(data_fields):
     """
     Returns a comma-separated string to retrieve fields for the $select URL parameter.

@@ -1,6 +1,13 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""
+A module of helper functions to print to the command line.
+"""
+
+
 from foodtruckclass import FoodTruck
+from requests.exceptions import HTTPError, ConnectionError, Timeout, RequestException
 
 
 def print_all_food_trucks(response_json):
@@ -74,7 +81,7 @@ def print_food_truck_header():
     print_two_columns("NAME", "ADDRESS")
 
 
-def print_end(error=False, user_terminate=False):
+def print_end(error=False, user_cancel=False):
     """
     Prints different messages to signal end of the program.
 
@@ -84,8 +91,39 @@ def print_end(error=False, user_terminate=False):
 
     if error:
         print "\nMax retries exceeded. Exiting the program... Bye!\n"
-    elif user_terminate:
+    elif user_cancel:
         print "\nYou ended this program. Thanks for visiting! Bye!\n"
     else:
         print "#### END ####\n"
+
+
+def print_http_error(e):
+    """
+    Print an error message for different HTTP exceptions.
+
+    requests.exceptions.RequestException is the base class and is the catch all exception type.
+
+    If error is not of the requests.exceptions.RequestException type, print a message as well.
+
+    :param e: requests.exceptions
+    """
+
+    message_body = ""
+
+    if isinstance(e, HTTPError):
+        messages_body = "HTTP error {}\n"
+
+    elif isinstance(e, ConnectionError):
+        messages_body = "Connection error {}\n"
+
+    elif isinstance(e, Timeout):
+        messages_body  = "Timeout error {}\n"
+
+    elif isinstance(e, RequestException):
+        messages_body = "Oops: Something went wrong {}\n"
+
+    if message_body:
+        print messages_body.format(e.message)
+    else:
+        print "Not a valid requests.exception!"
 
