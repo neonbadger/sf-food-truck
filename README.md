@@ -4,7 +4,7 @@ This is a command line program that prints out food truck information from the [
 
 # Installation
 
-Minimally, you need Python 2 and the requests library to run the program. You can run it within a virtual environment or globally on your machine.
+Minimally, you need Python 2.7 and the requests library to run the program. You can run it within a virtual environment or globally on your machine.
 
 1. Virtual Environment (Recommended)
 
@@ -14,37 +14,61 @@ Clone this repository.
 
 Create a virtual environment for this project. If you don't have virtualenv installed, follow the guide [here](https://docs.python-guide.org/dev/virtualenvs/) to install.
 
-```$ virtualenv env```
+```
+$ virtualenv env
+```
 
 Activate the virtual environment.
 
-```$ source env/bin/activate```
+```
+$ source env/bin/activate
+```
 
 Install dependencies.
 
-```$ pip install -r requirements.txt```
+```
+$ pip install -r requirements.txt
+```
 
-Run the program.
+Run the program with Python 2.7.
 
-```$ python main.py```
+```
+$ python main.py
+```
+or
+```
+$ ./main.py
+```
 
 Deactivate the virtual environment.
 
-```$ deactivate```
+```
+$ deactivate
+```
 
-2. Global
+2. Global Installation
 
 Clone this repository.
 
-```$ git clone https://github.com/neonbadger/sf-food-truck.git```
+```
+$ git clone https://github.com/neonbadger/sf-food-truck.git
+```
 
 Install requests library globally.
 
-```$ pip install requests```
+```
+$ pip install requests
+```
 
-Run the program.
+Run the program with Python 2.7.
 
-```$ python main.py```
+```
+$ python main.py
+```
+or
+```
+$ ./main.py
+```
 
 # Scalability
 
