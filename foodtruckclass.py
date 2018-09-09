@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 
+"""
+The purpose of the classes is to instantiate a FoodTruck object with a JSON dictionary, and
+we can use dot notation ('.'') or bracket notation ('[]') to access an attribute's value.
+
+The classes are very minimal at this point.
+"""
+
+
 class BaseClass(object):
 
     def __init__(self, data_dict):
