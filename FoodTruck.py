@@ -1,7 +1,6 @@
-#!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
-class AttrDict(object):
+class BaseClass(object):
 
     def __init__(self, data_dict):
         self.__dict__ = data_dict
@@ -19,6 +18,7 @@ class AttrDict(object):
         return repr(self.__dict__)
 
 
-class FoodTruck(AttrDict):
+class FoodTruck(BaseClass):
+
     def __init__(self, data_dict):
         super(FoodTruck, self).__init__(data_dict)

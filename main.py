@@ -5,180 +5,13 @@ import os
 import requests
 import time
 
-from datetime import datetime
-from FoodTruck import FoodTruck
+from printutils import *
+from queryutils import *
+from timeutils import *
+
 
 FOODTRUCK_DATASET_BASE_URL = "https://data.sfgov.org/resource/bbb8-hzi6.json"
 APP_TOKEN = os.environ.get("app_token", None)
-
-### TIME UTILS ###
-def get_datetime_now():
-    """
-    Returns the current local time as a datetime.datetime object.
-
-    :return: datetime.datetime
-    """
-
-    now = datetime.now()
-    return now
-
-
-def format_24hr_time(datetime):
-    """
-    Returns a string displaying datetime in a 0-padded {24-Hour}:{Minute} format.
-
-    This is the format used by the 'start24' and 'end24' fields in the Mobile Food Schedule dataset.
-
-    :param datetime: datetime.datetime
-    :return: str
-    """
-
-    string_24hr = datetime.strftime("%H:%M")
-    return string_24hr
-
-
-def format_string_literal(s):
-    """
-    Returns a string literal enclosed in matching single quotes (').
-
-    This is needed to perform SoQL (Socrata Query Language) queries for the text datatype.
-
-    See https://dev.socrata.com/docs/datatypes/text.html for details.
-
-    :param s: str
-    :return: str
-    """
-
-    return "\'{}\'".format(s)
-
-
-def format_24hr_string_literal(datetime):
-    """
-    Returns a string representing the datetime in {24-Hour}:{Minute} format ready for SoQL operations.
-
-    :param: datetime.datetime
-    :return: str
-    """
-
-    string_24hr = format_24hr_time(datetime)
-    return format_string_literal(string_24hr)
-
-
-def get_day_order(datetime):
-    """
-    Returns the day of the week as an integer, representing days in a week as follows:
-    Sun - 0, Mon - 1, Tues - 2, Wed - 3, Thurs - 4, Fri - 5, and Sat - 6.
-
-    This is the format used by 'dayorder' field in the Mobile Food Schedule dataset.
-
-    For comparison, Python datetime.weekday() has the following mapping:
-    Mon - 0, Tues - 1, Weds - 2, Thurs - 3, Fri - 4, Sat - 5, and Sun - 6.
-
-    :param: datetime.datetime
-    :return: int
-    """
-
-    dayorder = (datetime.weekday() + 1) % 7
-    return dayorder
-
-
-### QUERY PARAMS ###
-# https://dev.socrata.com/docs/queries/
-def build_select_clause(data_fields):
-    """
-    Returns a comma-separated string to retrieve fields for the $select URL parameter.
-
-    :param data_fields: list
-    """
-
-    return ",".join(data_fields)
-
-
-def build_where_clause(day_order, time_string):
-    """
-    Returns a string to filter results for the $where URL parameter -- specifically,
-    businesses that are open on a given day within a given time range.
-
-    :param day_order: int
-    :param time_string: str
-    :return: str
-    """
-
-    return "dayorder = {} AND {} > start24 AND {} < end24".format(day_order,
-                                                                  time_string,
-                                                                  time_string)
-
-
-def build_limit_clause(page_limit):
-    """
-    Returns a string for $limit URL parameter to denote how many records to be returned.
-
-    To achieve pagination, $offset is often used in conjunction with $limit.
-
-    :param page_limit: int
-    :return: string
-    """
-
-    return str(page_limit)
-
-
-def build_offset_clause(page_limit, page_index=0):
-    """
-    Returns a string for the $offset URL parameter to specify the starting position in the
-    dataset to retrieve records from. Note that page_index is 0-based.
-
-    To achieve pagination, $offset is often used in conjunction with $limit.
-
-    For example, if page_limit is 10 and page_index is at 3 ("4th page" from the 0 index),
-    offset begins at record number 30 (page_limit * page_index).
-
-    :param page_limit: int
-    :param page_index: int, defaults to 0 (beginning of the dataset)
-    :return: str
-    """
-
-    return str(page_limit * page_index)
-
-
-def build_order_clause(sort_field, order="ASC"):
-    """
-    Returns a string for the $order URL parameter.
-
-    :param sort_field: str
-    :param order: str, ASC or DESC - defaults to ASC
-    :return: str
-    """
-
-    return "{} {}".format(sort_field, order)
-
-
-def build_payload(data_fields,
-                  day_order,
-                  time_string,
-                  sort_order,
-                  page_limit,
-                  page_index):
-    """
-    Returns a dictionary that maps URL parameters to respective query values.
-
-    :param data_fields: list
-    :param day_order: int
-    :param time_string: str
-    :param sort_order: str
-    :param page_limit: int
-    :param page_index: int
-    :return: dictionary
-    """
-
-    payload = {
-        "$select" : build_select_clause(data_fields),
-        "$where"  : build_where_clause(day_order, time_string),
-        "$order"  : build_order_clause(sort_order),
-        "$limit"  : build_limit_clause(page_limit),
-        "$offset" : build_offset_clause(page_limit, page_index),
-    }
-
-    return payload
 
 
 def fetch_data_in_batches(data_fields,
@@ -217,7 +50,7 @@ def fetch_data_in_batches(data_fields,
         response = session.get(FOODTRUCK_DATASET_BASE_URL,
                                headers=header,
                                params=payload,
-                               timeout=5)
+                               timeout=10)
 
         # throw excpetion when request does not return 2XX
         response.raise_for_status()
@@ -239,93 +72,6 @@ def fetch_data_in_batches(data_fields,
         return -1
 
     return response
-
-
-def print_all_food_trucks(response_json):
-    """
-    Iterate through the JSON response list and print each item in the list.
-
-    :param response_json: list
-    """
-
-    for item_json in response_json:
-        print_food_truck(item_json)
-
-
-def print_food_truck(food_truck_dict):
-    """
-    Print the name and location of a FoodTruck object.
-
-    :param food_truck_dict: dict
-    """
-
-    food_truck = FoodTruck(food_truck_dict)
-    name = food_truck.applicant
-    location = food_truck.location
-
-    # print_two_columns(name, location)
-
-    starttime = food_truck.starttime
-    endtime = food_truck.endtime
-    start24 = food_truck.start24
-    end24 = food_truck.end24
-    dayofweekstr = food_truck.dayofweekstr
-
-    print name, location, starttime, start24, endtime, end24, dayofweekstr
-
-
-def print_two_columns(s1, s2):
-    """
-    Print two left-aligned, fixed-sized columns.
-
-    :param s1: string
-    :param s2: string
-    """
-
-    print "{:<80} {:<10}".format(s1, s2)
-
-
-def print_opening(datetime):
-    """
-    Print summary and instructions of the program.
-
-    Time is displayed in a more readable format like this:'09/08/2018 Sat 05:00 PM'.
-
-    :param: datetime.datetime
-    """
-
-    time_string = datetime.strftime("%m/%d/%Y %a %I:%M %p")
-
-    print "#####################################################################"
-    print "*** SF food trucks open currently at {} ***".format(time_string)
-    print "*** You will view 10 results at a time, ordered by the food truck's name alphabetically. ***"
-    print "*** You can type any key to view 10 results as a time. Or type letter 'e' case-insensitive to exit. ***"
-    print ""
-    print ""
-
-
-def print_food_truck_header():
-    """
-    Print headers for the food truck data.
-    """
-
-    print_two_columns("NAME", "ADDRESS")
-
-
-def print_end(error=False, user_terminate=False):
-    """
-    Prints different messages to signal end of the program.
-
-    :param error: boolean, default to False
-    :param user_terminate: boolean, default to True
-    """
-
-    if error:
-        print "\nMax retries exceeded. Exiting the program... Bye!\n"
-    elif user_terminate:
-        print "\nYou ended this program. Thanks for visiting! Bye!\n"
-    else:
-        print "#### END ####\n"
 
 
 def prompt_for_user_input():
@@ -442,6 +188,7 @@ def main():
         else:
             print_end(user_terminate=True)
             break
+
 
 if __name__ == '__main__':
     main()
