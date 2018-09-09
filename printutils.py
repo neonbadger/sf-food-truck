@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from foodtruck import FoodTruck
+from foodtruckclass import FoodTruck
 
 
 def print_all_food_trucks(response_json):
