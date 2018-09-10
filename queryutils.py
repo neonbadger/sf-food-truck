@@ -28,9 +28,9 @@ def build_where_clause(day_order, time_string):
     :return: str
     """
 
-    return "dayorder = {} AND {} > start24 AND {} < end24".format(day_order,
-                                                                  time_string,
-                                                                  time_string)
+    return "dayorder = {} AND {} >= start24 AND {} <= end24".format(day_order,
+                                                                    time_string,
+                                                                    time_string)
 
 
 def build_limit_clause(page_limit):
