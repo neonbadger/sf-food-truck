@@ -32,23 +32,15 @@ def print_food_truck(food_truck_dict):
     name = food_truck.applicant
     location = food_truck.location
 
-    # print_two_columns(name, location)
-
-    starttime = food_truck.starttime
-    endtime = food_truck.endtime
-    start24 = food_truck.start24
-    end24 = food_truck.end24
-    dayofweekstr = food_truck.dayofweekstr
-
-    print name, location, starttime, start24, endtime, end24, dayofweekstr
+    print_two_columns(name, location)
 
 
 def print_two_columns(s1, s2):
     """
-    Print two left-aligned, fixed-sized columns.
+    Print two left-aligned columns of fixed width.
 
-    :param s1: string
-    :param s2: string
+    :param s1: str
+    :param s2: str
     """
 
     print "{:<80} {:<10}".format(s1, s2)
@@ -56,7 +48,7 @@ def print_two_columns(s1, s2):
 
 def print_opening(datetime):
     """
-    Print summary and instructions of the program.
+    Print summary and instructions of the command line program.
 
     Time is displayed in a more readable format like this:'09/08/2018 Sat 05:00 PM'.
 
@@ -83,10 +75,10 @@ def print_food_truck_header():
 
 def print_end(error=False, user_cancel=False):
     """
-    Prints different messages to signal end of the program.
+    Prints different messages to signal end of the command line program.
 
-    :param error: boolean, default to False
-    :param user_terminate: boolean, default to True
+    :param error: bool, default to False
+    :param user_terminate: bool, default to True
     """
 
     if error:

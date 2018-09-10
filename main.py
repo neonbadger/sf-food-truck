@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""
+A command line program that prints to the console the food truck that are open
+at the time the program is run.
+"""
+
+
 import os
 import requests
 import time
