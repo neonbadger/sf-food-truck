@@ -71,6 +71,25 @@ or
 ```
 $ ./main.py
 ```
+## 3. Application Token (Optional)
+
+If you want to obtain an application token to use alongside with the program, you can register
+for one [here](https://opendata.socrata.com/login).
+
+You can set the app token as an environment variable.
+
+```
+$ export APP_TOKEN="<APP_TOKEN>"
+```
+If you no longer wish to retain the app token, you can delete from the environment.
+```
+$ del os.environ["APP_TOKEN"]
+```
+
+Alternatively, you can run the program like this
+```
+$ APP_TOKEN="<APP_TOKEN>" python main.py
+```
 
 # Scalability
 
