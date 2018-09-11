@@ -17,7 +17,7 @@ from timeutils import get_datetime_now, format_24hr_string_literal, get_day_orde
 
 
 FOODTRUCK_DATASET_BASE_URL = "https://data.sfgov.org/resource/bbb8-hzi6.json"
-APP_TOKEN = os.environ.get("app_token", None)
+APP_TOKEN = os.environ.get("APP_TOKEN", None)
 
 
 def fetch_data_in_batches(data_fields,
@@ -120,7 +120,6 @@ def main():
     current_time = format_24hr_string_literal(now_datetime)
 
     today_day_order = get_day_order(now_datetime)
-    print today_day_order
 
     data_fields = ["applicant", "location"]
     sort_order = data_fields[0]
