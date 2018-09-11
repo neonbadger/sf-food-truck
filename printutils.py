@@ -7,7 +7,7 @@ A module of helper functions to print to the command line.
 
 
 from foodtruckclass import FoodTruck
-from requests.exceptions import HTTPError, ConnectionError, Timeout, RequestException
+from requests.exceptions import ConnectionError, HTTPError, Timeout, RequestException
 
 
 def print_all_food_trucks(response_json):
@@ -95,27 +95,22 @@ def print_http_error(e):
 
     requests.exceptions.RequestException is the base class and is the catch all exception type.
 
-    If error is not of the requests.exceptions.RequestException type, print a message as well.
-
     :param e: requests.exceptions
     """
 
     message_body = ""
 
     if isinstance(e, HTTPError):
-        messages_body = "HTTP error {}\n"
+        messages_body = "HTTP error {}\n".format(e.message)
 
     elif isinstance(e, ConnectionError):
-        messages_body = "Connection error {}\n"
+        messages_body = "Connection error {}\n".format(e.message)
 
     elif isinstance(e, Timeout):
-        messages_body  = "Timeout error {}\n"
+        messages_body  = "Timeout error {}\n".format(e.message)
 
     elif isinstance(e, RequestException):
-        messages_body = "Oops: Something went wrong {}\n"
+        messages_body = "Oops: Something went wrong {}\n".format(e.message)
 
-    if message_body:
-        print messages_body.format(e.message)
-    else:
-        print "Not a valid requests.exception!"
+    print messages_body
 
