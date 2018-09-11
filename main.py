@@ -120,8 +120,9 @@ def main():
     current_time = format_24hr_string_literal(now_datetime)
 
     today_day_order = get_day_order(now_datetime)
+    print today_day_order
 
-    data_fields = ["applicant", "location", "starttime", "endtime", "start24", "end24", "dayofweekstr"]
+    data_fields = ["applicant", "location"]
     sort_order = data_fields[0]
 
     page_limit = 10
