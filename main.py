@@ -13,16 +13,22 @@ import time
 
 from printutils import *
 from queryutils import build_payload
-from timeutils import get_datetime_now, format_24hr_string_literal, get_day_order
+from timeutils import get_datetime_now, format_24hr_string_literal, get_day_order, get_future_datetime
+from urlutils import build_url
 
 
-FOODTRUCK_DATASET_BASE_URL = "https://data.sfgov.org/resource/bbb8-hzi6.json"
+BASE_URL = "https://data.sfgov.org"
+DATASET_PATH = "/resource/bbb8-hzi6"
+DATASET_URL = build_url(BASE_URL, DATASET_PATH)
+
+
 APP_TOKEN = os.environ.get("APP_TOKEN", None)
 
 
 def fetch_data_in_batches(data_fields,
                           day_order,
-                          time_string,
+                          current_time_string,
+                          future_time_string,
                           sort_order,
                           page_limit,
                           page_index):
@@ -46,17 +52,19 @@ def fetch_data_in_batches(data_fields,
 
     payload = build_payload(data_fields,
                             day_order,
-                            time_string,
+                            current_time_string,
+                            future_time_string,
                             sort_order,
                             page_limit,
                             page_index)
 
     try:
         session = requests.session()
-        response = session.get(FOODTRUCK_DATASET_BASE_URL,
+        response = session.get(DATASET_URL,
                                headers=header,
                                params=payload,
                                timeout=10)
+
 
         # throw excpetion when request does not return a 2XX status code
         response.raise_for_status()
@@ -117,7 +125,11 @@ def is_end(json_response, page_limit):
 def main():
 
     now_datetime = get_datetime_now()
-    current_time = format_24hr_string_literal(now_datetime)
+    current_time_string = format_24hr_string_literal(now_datetime)
+
+    hours_from_now = 2
+    future_datetime = get_future_datetime(now_datetime, hours_from_now)
+    future_time_string = format_24hr_string_literal(future_datetime)
 
     today_day_order = get_day_order(now_datetime)
 
@@ -148,7 +160,8 @@ def main():
 
             response = fetch_data_in_batches(data_fields,
                                              today_day_order,
-                                             current_time,
+                                             current_time_string,
+                                             future_time_string,
                                              sort_order,
                                              page_limit,
                                              page_index)
