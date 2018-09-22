@@ -46,7 +46,7 @@ def print_two_columns(s1, s2):
     print "{:<80} {:<10}".format(s1, s2)
 
 
-def print_opening(datetime):
+def print_opening(current_datetime, future_datetime):
     """
     Print summary and instructions of the command line program.
 
@@ -55,10 +55,11 @@ def print_opening(datetime):
     :param: datetime.datetime
     """
 
-    time_string = datetime.strftime("%m/%d/%Y %a %I:%M %p")
+    current_time_string = current_datetime.strftime("%m/%d/%Y %a %I:%M %p")
+    future_time_string = future_datetime.strftime("%m/%d/%Y %a %I:%M %p")
 
     print "#####################################################################"
-    print "*** SF food trucks open currently at {} ***".format(time_string)
+    print "*** SF food trucks open currently at {} until {} ***".format(current_time_string, future_time_string)
     print "*** You will view 10 results at a time, ordered by the food truck's name alphabetically. ***"
     print "*** You can type any key to view 10 results as a time. Or type letter 'e' case-insensitive to exit. ***"
     print ""

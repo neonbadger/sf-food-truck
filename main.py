@@ -145,7 +145,7 @@ def main():
     max_retries = 3
     retrying = False
 
-    print_opening(now_datetime)
+    print_opening(now_datetime, future_datetime)
 
     while retries < max_retries:
 
