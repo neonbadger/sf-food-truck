@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""
+A module of helper functions to build URL
+"""
+
 
 import urllib
 import urlparse
