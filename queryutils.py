@@ -18,7 +18,7 @@ def build_select_clause(data_fields):
     return ",".join(data_fields)
 
 
-def build_where_clause(day_order, time_string):
+def build_where_clause(day_order, current_time_string, future_time_string):
     """
     Returns a string to filter results for the $where URL parameter -- specifically,
     businesses that are open on a given day within a given time range.
@@ -28,9 +28,10 @@ def build_where_clause(day_order, time_string):
     :return: str
     """
 
-    return "dayorder = {} AND {} >= start24 AND {} <= end24".format(day_order,
-                                                                    time_string,
-                                                                    time_string)
+    return "dayorder = {} AND end24 > {} AND start24 < {}".format(
+                    day_order,
+                    current_time_string,
+                    future_time_string)
 
 
 def build_limit_clause(page_limit):
@@ -78,7 +79,8 @@ def build_order_clause(sort_field, order="ASC"):
 
 def build_payload(data_fields,
                   day_order,
-                  time_string,
+                  current_time_string,
+                  future_time_string,
                   sort_order,
                   page_limit,
                   page_index):
@@ -96,7 +98,7 @@ def build_payload(data_fields,
 
     payload = {
         "$select" : build_select_clause(data_fields),
-        "$where"  : build_where_clause(day_order, time_string),
+        "$where"  : build_where_clause(day_order, current_time_string, future_time_string),
         "$order"  : build_order_clause(sort_order),
         "$limit"  : build_limit_clause(page_limit),
         "$offset" : build_offset_clause(page_limit, page_index),

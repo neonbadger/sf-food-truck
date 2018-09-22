@@ -6,7 +6,7 @@ A module of helper functions for time-related operations.
 """
 
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def get_datetime_now():
@@ -61,6 +61,56 @@ def format_24hr_string_literal(datetime):
     return format_string_literal(string_24hr)
 
 
+def convert_hour_to_seconds(hour):
+    """
+    Returns an int that converts hours into seconds.
+
+    :param: int
+    :return: int
+    """
+
+    return hour * 60 * 60
+
+
+def get_time_delta(seconds):
+    """
+    Returns a datetime.timedelta object that represents the time difference in seconds.
+
+    :param: int
+    :return: datetime.timedelta
+    """
+
+    return timedelta(seconds=seconds)
+
+
+def _get_future_datetime(datetime, time_delta):
+    """
+    Returns the future datetime from a known datetime given a datetime.timedelta.
+
+    :param: datetime.datetime
+    :param: datetime.timedelta
+    :return: datetime.datetime
+    """
+
+    return datetime + time_delta
+
+
+def get_future_datetime(datetime, hour):
+    """
+    Returns the future datetime from a known datetime given the hour difference.
+
+    :param: datetime.datetime
+    :param: int
+    :return: datetime.datetime
+    """
+
+    seconds = convert_hour_to_seconds(hour)
+    time_delta_in_seconds = get_time_delta(seconds)
+    future_datetime = _get_future_datetime(datetime, time_delta_in_seconds)
+
+    return future_datetime
+
+
 def get_day_order(datetime):
     """
     Returns the day of the week as an integer, representing days in a week as follows:
@@ -77,4 +127,20 @@ def get_day_order(datetime):
 
     dayorder = (datetime.weekday() + 1) % 7
     return dayorder
+
+
+
+import unittest
+
+class TestTimeUtils(unittest.TestCase):
+    def test_get_day_order(self):
+        today = datetime.today()
+        today_dayorder = today.weekday()
+
+        self.assertEqual(today_dayorder, 3)
+        self.assertEqual(get_day_order(today), 4)
+
+if __name__ == '__main__':
+    unittest.main()
+
 
